@@ -391,14 +391,30 @@ def main():
             )
         report_lines.append("")
 
-    report_path = output_dir / "analysis_report.md"
-    report_path.write_text("\n".join(report_lines), encoding="utf-8")
+    plain_report_lines = []
+    for line in report_lines:
+        plain_line = line
+        if plain_line.startswith("### "):
+            plain_line = f"Imatge: {plain_line[4:]}"
+        elif plain_line.startswith("## "):
+            plain_line = plain_line[3:]
+        elif plain_line.startswith("# "):
+            plain_line = plain_line[2:]
+
+        if plain_line.startswith("- "):
+            plain_line = plain_line[2:]
+
+        plain_line = plain_line.replace("`", "").replace("**", "")
+        plain_report_lines.append(plain_line)
+
+    report_text = "\n".join(plain_report_lines)
 
     print(f"Done. Output directory: {output_dir}")
     print(f"- Metrics CSV: {csv_path}")
     print(f"- Figure 1: {output_dir / 'figure1_mse_vs_quality.png'}")
     print(f"- Figure 2: {output_dir / 'figure2_cr_vs_quality.png'}")
-    print(f"- Report: {report_path}")
+    print("- Report (console):")
+    print(report_text)
 
 
 if __name__ == "__main__":
